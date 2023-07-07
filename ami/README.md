@@ -25,7 +25,7 @@ qemu-img info /var/lib/libvirt/images/rheledge.qcow2
 
 ```bash
 sudo qemu-img convert /var/lib/libvirt/images/rheledge.qcow2 rheledge.raw
-aws s3 cp rheledge.raw s3:/yourbucketname
+aws s3 cp rheledge.raw s3://yourbucketname
 ```
 
 ### Import snapshot
