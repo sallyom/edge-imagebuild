@@ -1,0 +1,13 @@
+apiVersion: automationcontroller.ansible.com/v1beta1
+kind: AutomationController
+metadata:
+  name: edge-osbuild
+  namespace: aap
+  labels:
+    app.kubernetes.io/component: automationcontroller
+    app.kubernetes.io/managed-by: automationcontroller-operator
+    app.kubernetes.io/operator-version: ''
+    app.kubernetes.io/part-of: edge-osbuild
+spec:
+  no_log: true
+  image_pull_policy: IfNotPresent

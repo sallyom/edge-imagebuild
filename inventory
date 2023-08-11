@@ -1,5 +1,5 @@
 [rhel9]
-54.162.54.43
+3.95.191.190
 
 [rhel9:vars]
 ansible_user=ec2-user

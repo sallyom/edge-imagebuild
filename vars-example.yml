@@ -1,0 +1,66 @@
+---
+builder_blueprint_name: "rhde"
+builder_compose_type: "edge-installer"
+builder_wait_compose_timeout: 2400
+builder_pub_key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCPlYHtb4KAG45C7L6hzrqJyBC4+POysum5S7JGrTtGYw4ol+J8XftHVRcRGuCjXi06ss2h5n+35H/5sRQ3Gg8Kyxln4uyQSoyawjLYsK2tIwHg0WmvWnfi5oY3Ow72vlT++QdTlGzh7wb6WJvYsvr5NMyT7QJasotJNFQ+1ijevutc6lj8mUAkAmxr4LOGfHxHklVxc29d+b+SDuQ65djCgOBRPI+IMGy38g2g/d83S43yAgcIu2490+50kojAhloQ09dLqXanoPXEdwOTJDY1hb0WAjiaQtCVjujNjC94XNSjNiFMnogN2e50YMYP9LPn9U0HNHgKAWhbQNP7O17mNDg3i0x8sgzfR6MRK2042ziBENngDajzM76Cy+cGtB5e/AtW+IC39OROQDthYVlM+dVO/eKheraTBurDz0M6YlfPy8kXRc/0KqSSXjDkNTq14nbBmV0Id3NmTufsFnr3AtOG2t2kER2VdrknyttQX8T6UMKlpewAquylAiCr9VJOgvEGx7T9+IZc6i3EO3hVAfyfmzqpM7rZAAyAYxDFVW1GVPkRp2glpMQv4WiscF2mZodv/wuYtoFaCERYBxuO/Nb/WsPo0LCxYPgDrKUwg/sQxQlLwCr8qLZxEBFLhiNG97sVpC42bCurPi+XglSz62IYRwIqCrWobTAUhA2r/Q== cloud-user@image-builder"
+builder_request_timeout: 600
+builder_compose_customizations:
+  user:
+    name: "redhat" #example
+    description: "edge user"
+    password: "redhat" #example
+    key: "{{ builder_pub_key }}"
+    groups:
+      - "users"
+      - "wheel"
+builder_rhsm_repos:
+  - "rhocp-4.13-for-rhel-{{ ansible_distribution_major_version }}-{{ ansible_architecture }}-rpms"
+  - "fast-datapath-for-rhel-{{ ansible_distribution_major_version }}-{{ ansible_architecture }}-rpms"
+builder_compose_pkgs:
+  - "vim-enhanced"
+  - "git"
+  - "podman"
+  - "ansible-core"
+  - "pcp-zeroconf"
+  - "pcp-pmda-bcc"
+  - "microshift"
+  - "openshift-clients"
+  - "iputils"
+  - "binutils"
+  - "net-tools"
+  - "iotop"
+  - "redhat-release"
+builder_kickstart_options:
+  - lang en_US.UTF-8
+  - keyboard us
+  - timezone Etc/UTC --isUtc
+  - text
+  - zerombr
+  - clearpart --all --initlabel
+  - autopart
+  - network  --bootproto=dhcp --device=link --onboot=on --noipv6 --activate
+  - part /boot/efi --fstype=efi --size=200
+  - part /boot --fstype=xfs --asprimary --size=800
+  - part swap --fstype=swap --size=200
+  - part pv.01 --grow
+  - volgroup rhel pv.01
+  - logvol / --vgname=rhel --fstype=xfs --percent=90 --name=root
+  - rootpw --iscrypted $6$tnfB2qQ4Sq5FZ//x$ISN.L3ni7MIVbC/hmzFXV6lBxsJj29erKCmvJAGrGghgVC/gjp1VRaG8JtbrN1TbXmx/J8FKEIg.gzFa1nSUx0
+  - user --groups=wheel --name=redhat --password=$6$tnfB2qQ4Sq5FZ//x$ISN.L3ni7MIVbC/hmzFXV6lBxsJj29erKCmvJAGrGghgVC/gjp1VRaG8JtbrN1TbXmx/J8FKEIg.gzFa1nSUx0 --iscrypted --gecos="redhat"
+  - reboot
+  - services --enabled=ostree-remount
+  - services --enabled=microshift
+  - ostreesetup --nogpg --osname=rhel --remote=edge --url=http://{{ ansible_host }}/{{ builder_blueprint_name }}/repo/ --ref={{ builder_blueprint_ref }}
+additional_kickstart_post:
+  - "echo -e 'redhat\tALL=(ALL)\tNOPASSWD: ALL' >> /etc/sudoers"
+  - mkdir -p /var/log/journal
+  - "sed -i 's/.*Storage=.*/Storage=auto/g' /etc/systemd/journald.conf"
+  - "sed -i 's/.*SystemMaxUse=.*/SystemMaxUse=1G/g'   /etc/systemd/journald.conf"
+  - "sed -i 's/.*RuntimeMaxUse=.*/RuntimeMaxUse=1G/g' /etc/systemd/journald.conf"
+  - "echo -e 'gpg-verify=false' >> /etc/ostree/remotes.d/edge.conf"
+  - firewall-offline-cmd --zone=trusted --add-source=10.42.0.0/16
+  - firewall-offline-cmd --zone=trusted --add-source=169.254.169.1
+  - firewall-offline-cmd --zone=public --add-port=6443/tcp
+  - firewall-offline-cmd --zone=public --add-port=80/tcp
+  - firewall-offline-cmd --zone=public --add-port=443/tcp
+
