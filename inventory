@@ -1,0 +1,6 @@
+[rhel9]
+54.162.54.43
+
+[rhel9:vars]
+ansible_user=ec2-user
+become=true
