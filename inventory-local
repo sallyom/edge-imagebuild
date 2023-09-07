@@ -1,0 +1,6 @@
+[local]
+localhost ansible_connection=local ansible_python_interpreter="/usr/bin/env python"
+
+[local:vars]
+ansible_user=ec2-user
+become=yes

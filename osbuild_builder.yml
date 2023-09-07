@@ -1,0 +1,12 @@
+---
+- name: Run osbuild_builder role
+  gather_facts: true
+  become: true
+  hosts: all
+  vars_files:
+    - vars.yml
+  tasks:
+    - name: Run the role
+      ansible.builtin.import_role:
+        name: infra.osbuild.builder
+

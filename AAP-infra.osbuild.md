@@ -80,50 +80,9 @@ Then, `Save`.
 
 #### Configure a Template (job template)
 
-[script to debug weldr proxy calls](https://github.com/mechpen/sockdump/blob/master/sockdump.py)
 
 From the left, choose `Templates` then `Add` to create a new template. You will create a new template for every playbook you run.
 You'll need to fill in the following fields:
 
 **--TODO--FINISH**
-
-
-
-
-
-
-#### SCP ISO from VM to local system, boot edge device
-If all goes well, you should now have a `~/rhde-ztp.iso` 
-
-Here's the final command to copy this over to your local system.
-
-```bash
-scp -i ~/.ssh/your.pem build-vm-user@build-vm-ipaddress:/home/your-build-machine-user/generate-iso/rhde-ztp.iso ~/Downloads
-
-ls ~/Downloads/rhde-ztp.iso
--rw-r--r--. 1 somalley somalley 2314207232 Jun 13 11:46 /home/somalley/Downloads/rhde-ztp.iso
-```
-
-You can write this iso to a usb drive to boot your physical edge device or use it to create a virtual machine.
-If you wish to create a virtual machine with a local hypervisor [watch this brief tutorial](https://youtu.be/1gTEpBuZV4o).
-With the example kickstart file from this repository, a user is created in the VM `username: redhat, password: redhat`. 
-
-### Serve RH Device Edge update commits and update edge machine
-
-To point your edge devices to the builder, you can edit the remotes configuration file at `/etc/ostree/remotes.d/edge.conf`
-
-```bash
-cat /etc/ostree/remotes.d/rhel.conf
-
-[remote "rhel"]
-url=file:///run/install/repo/ostree/repo
-gpg-verify=false
-
-[remote "edge"]
-gpg-verify=false
-url=http://ip-address-of-build-machine:8000/repo
-```
-
-Whenever it is necessary to update your edge devices, you can point them to your Device Edge builder where you can serve ostree commits by
-following [this workflow](./rpm-ostree-update/update.md).
 
