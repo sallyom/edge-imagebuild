@@ -1,0 +1,5 @@
+FROM quay.io/oglok/rhde:latest
+RUN cd /etc/yum.repos.d/ && curl -LO https://pkgs.tailscale.com/stable/fedora/tailscale.repo && \
+    rpm-ostree install tailscale && \
+    systemctl disable tailscaled && \
+    ostree container commit
