@@ -10,11 +10,6 @@
       state: present
     with_items:
     - podman
-  - name: Ensure podman running
-    service:
-      name: podman
-      state: started
-      enabled: true
 - hosts: 54.163.16.195
   remote_user: core
   tasks:
