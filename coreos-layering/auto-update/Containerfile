@@ -1,0 +1,7 @@
+FROM quay.io/fedora/fedora-coreos:stable
+# Copy our OS configuration - this adds automatic updates
+ADD usr usr
+RUN source usr/share/tas-env
+# Remove OpenSSH, lock the root account, remove sudo - we don't want remote logins at all.
+#RUN rpm -e openssh-{server,clients} && passwd -l root && rpm -e sudo sudo-python-plugin && ostree container commit
+RUN ostree container commit

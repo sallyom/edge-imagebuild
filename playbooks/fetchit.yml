@@ -1,0 +1,57 @@
+---
+- hosts: 54.163.16.195
+  become: true
+  remote_user: core
+  gather_facts: true
+  tasks:
+  - name: Ensure podman
+    package:
+      name: "{{ item }}" 
+      state: present
+    with_items:
+    - podman
+  - name: Ensure podman running
+    service:
+      name: podman
+      state: started
+      enabled: true
+- hosts: 54.163.16.195
+  remote_user: core
+  tasks:
+  - name: Ensure podman socket is running
+    service:
+      name: podman.socket
+      state: started
+      args: --user
+  
+  - name: ensure directory exists
+    file:
+      path: "{{ ansible_env.HOME }}/.fetchit"
+      state: directory
+      mode: '0755'
+
+  - name: Get file from URL
+    ansible.builtin.get_url:
+      url: https://raw.githubusercontent.com/containers/fetchit/main/examples/raw-config.yaml
+      dest: "{{ ansible_env.HOME }}/.fetchit/config.yaml"
+    register: fetchit_config
+
+  - name: Record the fetchit containers status
+    containers.podman.podman_container_info:
+      name: fetchit
+    register: fetchit_container_info
+    ignore_errors: true 
+
+  - name: Ensure container running
+    containers.podman.podman_container:
+      name: fetchit
+      image: quay.io/fetchit/fetchit:latest
+      state: started
+      restart_policy: always
+      security_opt:
+        - label=disable
+      volumes:
+        - "{{ ansible_env.HOME }}/.fetchit:/opt/mount"
+        - fetchit-volume:/opt
+        - /run/user/{{ ansible_user_uid }}/podman/podman.sock:/run/podman/podman.sock
+    when: fetchit_config is changed or fetchit_container_info.stderr != ""
