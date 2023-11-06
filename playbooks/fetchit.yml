@@ -17,7 +17,7 @@
 
   - name: Get file from URL
     ansible.builtin.get_url:
-      url: https://raw.githubusercontent.com/containers/fetchit/main/examples/raw-config.yaml
+      url: https://raw.githubusercontent.com/sallyom/fetchit/main/examples/config-reload.yaml
       dest: "{{ ansible_env.HOME }}/.fetchit/config.yaml"
     register: fetchit_config
 

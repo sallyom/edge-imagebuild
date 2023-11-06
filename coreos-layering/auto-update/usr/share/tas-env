@@ -5,7 +5,6 @@ echo "base hostname = $BASE_HOSTNAME"
 
 export KEYCLOAK_REALM=sigstore
 export FULCIO_URL=https://fulcio.$BASE_HOSTNAME
-export KEYCLOAK_URL=https://keycloak-keycloak-system.$BASE_HOSTNAME
 export REKOR_URL=https://rekor.$BASE_HOSTNAME
 export TUF_URL=https://tuf.$BASE_HOSTNAME
-export OIDC_ISSUER_URL=$KEYCLOAK_URL/auth/realms/$KEYCLOAK_REALM
+export OIDC_ISSUER_URL=https://rh-oidc.s3.us-east-1.amazonaws.com/21o4ml1f5kchd6ee9nmh5dhc6efqba38
