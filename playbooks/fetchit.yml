@@ -6,6 +6,7 @@
     ansible.builtin.systemd:
       name: podman.socket
       state: started
+      enabled: true
       scope: user
   
   - name: ensure directory exists
@@ -34,7 +35,7 @@
 
   - name: Get file from URL
     ansible.builtin.get_url:
-      url: https://raw.githubusercontent.com/containers/fetchit/main/systemd/fetchit-user.service
+      url: https://raw.githubusercontent.com/sallyom/fetchit/main/systemd/fetchit-user.service
       dest: "{{ ansible_env.HOME }}/.config/systemd/user/fetchit.service"
 
   - name: Ensure fetchit service is running
