@@ -1,7 +1,0 @@
----
-collections:
-  - amazon.aws
-  - ansible.posix
-  - fedora.linux_system_roles
-  - infra.osbuild
-# - crowdstrike.falcon 
